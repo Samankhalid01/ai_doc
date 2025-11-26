@@ -1,0 +1,11 @@
+{
+  "name": "document-intelligence",
+  "version": "1.0.0",
+  "description": "AI Document Intelligence System with OCR, Classification, and Extraction",
+  "scripts": {
+    "start": "python -m http.server 3000 --directory frontend"
+  },
+  "keywords": ["ocr", "ai", "document", "classification", "extraction"],
+  "author": "",
+  "license": "MIT"
+}
