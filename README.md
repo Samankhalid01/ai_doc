@@ -54,7 +54,7 @@ sudo apt-get install tesseract-ocr
 cd e:\doc_intelligence
 python -m venv venv
 .\venv\Scripts\Activate.ps1
-pip install -r requirementss.txt
+pip install -r requirements.txt
 ```
 
 2. **Train the ML classifier:**
@@ -215,6 +215,35 @@ python app/train_classifier.py
 - For production, update CORS settings in `main.py`
 
 ## 📈 Performance
+ 
+## ⚠️ Prevent Committing `venv/`
+
+- **Why:** The `venv/` folder contains platform-specific binaries and large files (e.g. compiled extensions). Committing it can make your repository very large and prevent pushes to Git hosting services.
+- **Add to `.gitignore`:** Ensure the repository ignores `venv/`:
+
+```gitignore
+# Ignore Python virtual environment
+venv/
+```
+
+- **If large files were already committed:** The project maintainer cleaned the history to remove `venv/` and pushed a backup branch `backup/main` to the remote. If you have a local clone, re-clone or reset to avoid problems (recommended).
+
+- **Recreate the environment (Windows PowerShell):**
+
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+- **If you're updating dependencies:**
+
+```powershell
+pip freeze > requirements.txt
+```
+
+Notify collaborators after a history rewrite so they can re-clone or reset their local copies.
+
 
 - Average processing time: 2-5 seconds per document
 - Supports files up to 10MB

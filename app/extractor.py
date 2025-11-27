@@ -207,7 +207,8 @@ def extract_fields(doc_type, text):
             "experience": cv.get("experience"),
             "technologies": cv.get("technologies", []),
         }
-        return {k: v for k, v in out.items() if v}
+        # Keep keys that are explicitly set (including experience when 0)
+        return {k: v for k, v in out.items() if v is not None}
     elif doc_type == "id_card":
         idc = extract_id(text)
         out = {
@@ -216,6 +217,6 @@ def extract_fields(doc_type, text):
             "dob": idc.get("dob"),
             "address": idc.get("address"),
         }
-        return {k: v for k, v in out.items() if v}
+        return {k: v for k, v in out.items() if v is not None}
     else:
         return {"message": "No extractor matched"}

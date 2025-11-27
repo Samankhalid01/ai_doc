@@ -256,7 +256,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🤖 Document Intelligence</h1>
+        <h1> Document Intelligence</h1>
         <p class="subtitle">AI-powered OCR, Classification & Data Extraction</p>
 
         <div class="upload-area" id="uploadArea">
@@ -270,10 +270,10 @@
 
         <div style="text-align: center;">
             <button class="btn" id="uploadBtn" style="display: none;">
-                🚀 Process Document
+                 Process Document
             </button>
             <button class="btn reset-btn" id="resetBtn" style="display: none;">
-                🔄 Upload Another
+                 Upload Another
             </button>
         </div>
 
@@ -408,30 +408,81 @@
                 </div>
             `;
 
-            // Display extracted fields
+            // Display extracted fields. Prefer specific headings for invoices.
             if (extracted_data && Object.keys(extracted_data).length > 0) {
-                html += `
-                    <div class="result-item">
-                        <div class="result-label">Extracted Information</div>
-                        <div class="extracted-fields">
-                `;
+                if (document_type && document_type.toLowerCase().includes('invoice')) {
+                    html += `
+                        <div class="result-item">
+                            <div class="result-label">Invoice Details</div>
+                            <div class="extracted-fields">
+                    `;
 
-                for (const [key, value] of Object.entries(extracted_data)) {
-                    const displayValue = Array.isArray(value) ? value.join(', ') : value;
-                    if (displayValue && displayValue.length > 0) {
-                        html += `
-                            <div class="field">
-                                <div class="field-name">${formatFieldName(key)}</div>
-                                <div class="field-value">${displayValue}</div>
-                            </div>
-                        `;
+                    const invoiceFields = [
+                        { key: 'invoice_number', label: 'Invoice Number' },
+                        { key: 'account_number', label: 'Account' },
+                        { key: 'invoice_total', label: 'Subtotal / Total' },
+                        { key: 'amounts_found', label: 'Amounts Found' },
+                        { key: 'date', label: 'Date' },
+                        { key: 'dates_found', label: 'Dates Found' }
+                    ];
+
+                    // Render the preferred invoice fields first
+                    for (const f of invoiceFields) {
+                        if (extracted_data[f.key]) {
+                            const val = Array.isArray(extracted_data[f.key]) ? extracted_data[f.key].join(', ') : extracted_data[f.key];
+                            html += `
+                                <div class="field">
+                                    <div class="field-name">${f.label}</div>
+                                    <div class="field-value">${val}</div>
+                                </div>
+                            `;
+                        }
                     }
-                }
 
-                html += `
+                    // Render any remaining fields not in the preferred list
+                    for (const [key, value] of Object.entries(extracted_data)) {
+                        if (!invoiceFields.find(x => x.key === key)) {
+                            const displayValue = Array.isArray(value) ? value.join(', ') : value;
+                            if (displayValue && displayValue.length > 0) {
+                                html += `
+                                    <div class="field">
+                                        <div class="field-name">${formatFieldName(key)}</div>
+                                        <div class="field-value">${displayValue}</div>
+                                    </div>
+                                `;
+                            }
+                        }
+                    }
+
+                    html += `
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } else {
+                    // Generic rendering for other document types
+                    html += `
+                        <div class="result-item">
+                            <div class="result-label">Extracted Information</div>
+                            <div class="extracted-fields">
+                    `;
+
+                    for (const [key, value] of Object.entries(extracted_data)) {
+                        const displayValue = Array.isArray(value) ? value.join(', ') : value;
+                        if (displayValue && displayValue.length > 0) {
+                            html += `
+                                <div class="field">
+                                    <div class="field-name">${formatFieldName(key)}</div>
+                                    <div class="field-value">${displayValue}</div>
+                                </div>
+                            `;
+                        }
+                    }
+
+                    html += `
+                            </div>
+                        </div>
+                    `;
+                }
             }
 
             // Display raw text preview
